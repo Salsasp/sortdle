@@ -1,8 +1,4 @@
-export type SortInstruction = {
-    action: string,
-    indexFrom: number,
-    indexTo: number
-};
+import { type SortInstruction } from "../utils/types";
 
 export function dispatch(sortType: string, numbers: number[]): SortInstruction[] {
     switch (sortType) {

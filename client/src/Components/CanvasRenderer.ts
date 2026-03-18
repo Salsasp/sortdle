@@ -1,4 +1,5 @@
-import { dispatch, type SortInstruction } from "./sorting";
+import { dispatch } from "./sorting";
+import { type SortInstruction } from "../utils/types";
 import { sleep } from "../utils/utils";
 
 export class CanvasRenderer {
