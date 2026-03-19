@@ -1,4 +1,4 @@
-import { dispatch } from "./sorting";
+import { getSortInstructions } from "./sorting";
 import { type SortInstruction } from "../utils/types";
 import { sleep } from "../utils/utils";
 
@@ -40,17 +40,32 @@ export class CanvasRenderer {
         });
     }
 
-    async dispatchSort(sortType: string, numbers: number[]) {
+    singleRender(numbers: number[], percentUncovered: number, colorFill: string) {
+        this.drawArray(numbers);
+        this.drawCover(percentUncovered, colorFill);
+    }
+
+    drawCover(percentUncovered: number, colorFill: string) {
+        if (percentUncovered > 100 || percentUncovered < 0) {
+            throw new Error("Invalid percentage");
+        }
+        const uncoveredWidth = this.canvas.width * (percentUncovered/100);
+        this.ctx.fillStyle = colorFill;
+        this.ctx.strokeStyle = colorFill;
+        this.ctx.fillRect(uncoveredWidth, this.canvas.height, this.canvas.width-uncoveredWidth, -this.canvas.height)
+    }
+
+    async dispatchSort(sortType: string, numbers: number[], percentUncovered: number) {
         const workingNumbers = [...numbers];
-        const instructions = dispatch(sortType, workingNumbers);
+        const instructions = getSortInstructions(sortType, workingNumbers);
 
         for (const instruction of instructions) {
-            this.executeInstruction(instruction, workingNumbers);
-            await sleep(50);
+            this.executeInstruction(instruction, workingNumbers, percentUncovered);
+            await sleep(25);
         }
     }
 
-    executeInstruction(instruction: SortInstruction, numbers: number[]) {
+    executeInstruction(instruction: SortInstruction, numbers: number[], percentUncovered: number) {
         switch(instruction.action) {
             case 'SWAP':
                 let temp = numbers[instruction.indexTo];
@@ -61,5 +76,6 @@ export class CanvasRenderer {
                 throw new Error('Invalid instruction action!');
         }
         this.drawArray(numbers);
+        this.drawCover(percentUncovered, "black");
     }
 }

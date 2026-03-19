@@ -1,8 +1,8 @@
 import { type SortInstruction } from "../utils/types";
 
-export function dispatch(sortType: string, numbers: number[]): SortInstruction[] {
+export function getSortInstructions(sortType: string, numbers: number[]): SortInstruction[] {
     switch (sortType) {
-        case "BUBBLE":
+        case "bubble":
             return bubbleSort(numbers);
         default:
             throw new Error('invalid sort type')

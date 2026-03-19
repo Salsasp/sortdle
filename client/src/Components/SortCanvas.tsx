@@ -1,15 +1,17 @@
 import './stylesheets/sortcanvas.css'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { CanvasRenderer } from './CanvasRenderer';
+import type { SortCanvasProps } from '../utils/types';
 
-function SortCanvas () {
+const SortCanvas = forwardRef((props: SortCanvasProps, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const rendererRef = useRef<CanvasRenderer | null>(null);
-    const [arr, setArr] = useState([
-        42, 17, 89, 23, 76, 5, 64, 31, 58, 12,
-        95, 38, 71, 2, 84, 27, 49, 66, 14, 53,
-        91, 7, 36, 80, 19, 62, 44, 28, 73, 10
-    ]);
+
+    useImperativeHandle(ref, () => ({
+        runSort(sortType: string) {
+            rendererRef.current?.dispatchSort(sortType, props.numbers, props.percentUncovered);
+        },
+    }));
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -18,23 +20,15 @@ function SortCanvas () {
     }, []);
 
     useEffect(() => {
-        rendererRef.current?.drawArray(arr);
-    }, [arr]);
-
-    const randomize = () => {
-        setArr(prev => prev.map(() => Math.floor(Math.random() * 100)));
-    };
-
-    const bubble = () => {
-        rendererRef.current?.dispatchSort('BUBBLE', arr);
-    }
+        rendererRef.current?.drawArray(props.numbers);
+        rendererRef.current?.drawCover(props.percentUncovered, "black");
+    }, [props.numbers]);
 
     return (
         <div>
             <canvas id="sort-canvas" ref={canvasRef}></canvas>
-            <button onClick={bubble}>Randomize</button>
         </div>
     )
-}
+});
 
 export default SortCanvas;

@@ -1,7 +1,13 @@
 export type SelectorProps = {
-    label: string,
-    id: string,
-    options: AlgorithmSelectorOption[]
+    id: string;
+    options: AlgorithmSelectorOption[];
+    value: string;
+    onChange: (val: string) => void;
+}
+
+export type SortCanvasProps = {
+    numbers: number[],
+    percentUncovered: number
 }
 
 export type SortInstruction = {

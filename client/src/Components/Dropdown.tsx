@@ -1,11 +1,10 @@
 import { type SelectorProps } from "../utils/types";
 
-function Dropdown ({ label, id, options }: SelectorProps) {
+function Dropdown ({ id, options, value, onChange }: SelectorProps) {
     
     return (
         <div>
-            <select id={id}>
-                <option value=''>{label}</option>
+            <select id={id} value={value} onChange={(e) => onChange(e.target.value as string)}>
                 {options.map((option) => (
                     <option value={option.value}>{option.label}</option>
                 ))}
