@@ -22,7 +22,7 @@ const SortCanvas = forwardRef((props: SortCanvasProps, ref) => {
     useEffect(() => {
         rendererRef.current?.drawArray(props.numbers);
         rendererRef.current?.drawCover(props.percentUncovered, "black");
-    }, [props.numbers]);
+    }, [props.numbers, props.percentUncovered]);
 
     return (
         <div>
