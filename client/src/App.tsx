@@ -1,11 +1,28 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
 import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
 import type { AlgorithmSelectorOption } from './utils/types'
+import { getDailyRandomNumbers } from './Components/ApiSlice'
 
 function App() {
+  const [arr, setArr] = useState<number[]>([]);
+  const canvasRef = useRef<any>(null);
+
+  const dailyAlgorithm = "merge"; // TODO: set this from a prop that gets passed from an API call to go endpoint
+
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(dailyAlgorithm)
+  const [guessesRemaining, setGuessesRemaining] = useState(4);
+  const percentUncovered = (100 / 5) * (5-guessesRemaining);
+
+  useEffect(() => {
+    async function fetchNumbers() {
+      const numbers = await getDailyRandomNumbers();
+      setArr(numbers);
+    }
+    fetchNumbers();
+  }, []);
 
   const handleGuessSubmission = () => {
     if (selectedAlgorithm === dailyAlgorithm) {
@@ -23,18 +40,6 @@ function App() {
     })
   );
 
-  const canvasRef = useRef<any>(null);
-
-  const [arr, setArr] = useState([
-          42, 17, 89, 23, 76, 5, 64, 31, 58, 12,
-          95, 38, 71, 2, 84, 27, 49, 66, 14, 53,
-          91, 7, 36, 80, 19, 62, 44, 28, 73, 10
-  ]);
-  const dailyAlgorithm = "bubble"; // TODO: set this from a prop that gets passed from an API call to go endpoint
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(dailyAlgorithm)
-  const [guessesRemaining, setGuessesRemaining] = useState(4);
-  const percentUncovered = (100 / 5) * (5-guessesRemaining);
-
   return (
     <>
       <div>
@@ -44,7 +49,7 @@ function App() {
         <Dropdown 
           id='algo-selector' 
           options={options}
-          value={selectedAlgorithm}
+          value={"bubble"}
           onChange={setSelectedAlgorithm}>
         </Dropdown>
         <button onClick={() => canvasRef.current.runSort(dailyAlgorithm)}>Sort!</button>
