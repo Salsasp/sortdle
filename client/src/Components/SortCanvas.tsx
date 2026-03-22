@@ -26,7 +26,7 @@ const SortCanvas = forwardRef((props: SortCanvasProps, ref) => {
 
     return (
         <div>
-            <canvas id="sort-canvas" ref={canvasRef}></canvas>
+            <canvas width={"1000px"} height={"500px"} id="sort-canvas" ref={canvasRef}></canvas>
         </div>
     )
 });
