@@ -1,4 +1,4 @@
-import { getSortInstructions } from "./sorting";
+import { getSortInstructions } from "./Sorting";
 import { type SortInstruction } from "../utils/types";
 import { sleep } from "../utils/utils";
 
