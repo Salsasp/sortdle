@@ -4,7 +4,7 @@ import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
 import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
 import type { AlgorithmSelectorOption } from './utils/types'
-import { getDailyRandomNumbers } from './Components/ApiSlice'
+import { getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
 
 function App() {
   const [arr, setArr] = useState<number[]>([]);
@@ -14,8 +14,8 @@ function App() {
   const dailyAlgorithm = "merge"; // TODO: set this from a prop that gets passed from an API call to go endpoint
 
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(DEFAULT_SELECTOR_ALGORITHM)
-  const [guessesRemaining, setGuessesRemaining] = useState(4);
-  const percentUncovered = (100 / 5) * (5-guessesRemaining);
+  const [guessesRemaining, setGuessesRemaining] = useState(4); // TODO: This should probably use constants instead of magic numbers
+  const percentUncovered = (100 / 5) * (5-guessesRemaining); // This too
 
   useEffect(() => {
     async function fetchNumbers() {
@@ -23,6 +23,13 @@ function App() {
       setArr(numbers);
     }
     fetchNumbers();
+  }, []);
+
+  useEffect(() => {
+    async function fetchDailyPuzzleData() {
+      const puzzleData = await getDailyPuzzleData();
+    }
+    fetchDailyPuzzleData();
   }, []);
 
   const handleGuessSubmission = () => {
