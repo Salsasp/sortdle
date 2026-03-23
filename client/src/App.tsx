@@ -9,10 +9,11 @@ import { getDailyRandomNumbers } from './Components/ApiSlice'
 function App() {
   const [arr, setArr] = useState<number[]>([]);
   const canvasRef = useRef<any>(null);
+  const DEFAULT_SELECTOR_ALGORITHM = 'bubble';
 
   const dailyAlgorithm = "merge"; // TODO: set this from a prop that gets passed from an API call to go endpoint
 
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(dailyAlgorithm)
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(DEFAULT_SELECTOR_ALGORITHM)
   const [guessesRemaining, setGuessesRemaining] = useState(4);
   const percentUncovered = (100 / 5) * (5-guessesRemaining);
 
