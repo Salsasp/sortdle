@@ -2,31 +2,43 @@ package gateway
 
 import (
 	"database/sql"
-	"fmt"
+	"encoding/json"
+	"log"
 	"time"
 )
 
-func GetDailyPuzzleRow(db *sql.DB) []string {
+type DailyPuzzle struct {
+	Date      string `json:"date"`
+	Algorithm string `json:"algorithm"`
+	Numbers   []int  `json:"numbers"`
+}
+
+func GetDailyPuzzleRow(db *sql.DB) DailyPuzzle {
 	var puzzleDate string
 	var algorithm string
-	var numbers string
-	rowData := make([]string, 3)
+	var rawNumbers []byte
 
 	query := "SELECT puzzle_date, algorithm, numbers FROM daily_puzzle WHERE puzzle_date = ?"
-	todayDate := time.Now().Format("2006-01-02")
-	err := db.QueryRow(query, todayDate).Scan(&puzzleDate, &algorithm, &numbers)
+	todayDate := time.Now().Format("2006-01-02") //dear god why can't you be normal time library
+	err := db.QueryRow(query, todayDate).Scan(&puzzleDate, &algorithm, &rawNumbers)
 
 	if err == sql.ErrNoRows {
-		return rowData
+		return DailyPuzzle{}
 	}
 
 	if err != nil {
-		fmt.Println("Error fetching row from database: " + err.Error())
-		return rowData
+		log.Fatal(err)
 	}
 
-	rowData[0] = puzzleDate
-	rowData[1] = algorithm
-	rowData[2] = numbers
-	return rowData
+	var numbers []int
+	err = json.Unmarshal(rawNumbers, &numbers)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return DailyPuzzle{
+		Date:      puzzleDate,
+		Algorithm: algorithm,
+		Numbers:   numbers,
+	}
 }

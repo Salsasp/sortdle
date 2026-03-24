@@ -7,13 +7,13 @@ import type { AlgorithmSelectorOption } from './utils/types'
 import { getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
 
 function App() {
-  const [arr, setArr] = useState<number[]>([]);
-  const canvasRef = useRef<any>(null);
   const DEFAULT_SELECTOR_ALGORITHM = 'bubble';
+  const canvasRef = useRef<any>(null);
 
-  const dailyAlgorithm = "merge"; // TODO: set this from a prop that gets passed from an API call to go endpoint
-
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(DEFAULT_SELECTOR_ALGORITHM)
+  const [arr, setArr] = useState<number[]>([]);
+  const [dailyAlgorithm, setDailyAlgorithm] = useState<string>(DEFAULT_SELECTOR_ALGORITHM);
+  const [puzzleDate, setPuzzleDate] = useState<string>();
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(DEFAULT_SELECTOR_ALGORITHM);
   const [guessesRemaining, setGuessesRemaining] = useState(4); // TODO: This should probably use constants instead of magic numbers
   const percentUncovered = (100 / 5) * (5-guessesRemaining); // This too
 
@@ -28,6 +28,9 @@ function App() {
   useEffect(() => {
     async function fetchDailyPuzzleData() {
       const puzzleData = await getDailyPuzzleData();
+      setPuzzleDate(puzzleData['date'])
+      setDailyAlgorithm(puzzleData['algorithm'])
+      setArr(puzzleData['numbers'])
     }
     fetchDailyPuzzleData();
   }, []);
