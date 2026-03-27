@@ -1,0 +1,25 @@
+.main-title-container {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+}
+
+.main-title-text {
+    size: 150pt;
+}
+ 
+ .heart-img {
+    width: 64px;
+    height: 64px;
+ }
+
+ .guesses-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+ }
+
+ .hearts-container {
+
+ }

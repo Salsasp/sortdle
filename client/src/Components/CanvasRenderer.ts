@@ -28,6 +28,7 @@ export class CanvasRenderer {
     }
 
     drawArray(numbers: number[]) {
+        if (!numbers) return;
         this.clear();
         const fillColor = 'blue';
         const outlineColor = 'black';
