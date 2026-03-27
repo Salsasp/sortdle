@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -30,6 +31,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	c := cron.New()
+	c.AddFunc("0 0 * * *", func() {
+		handlers.SetDailyPuzzle(db)
+	})
+	c.Start()
+
 	http.HandleFunc("/api/getDailyPuzzle", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetDailyPuzzle(w, r, db)
 	})
@@ -38,5 +45,6 @@ func main() {
 	fmt.Println("Server running on :8080")
 	http.ListenAndServe(":8080", nil)
 
+	defer c.Stop()
 	defer db.Close()
 }

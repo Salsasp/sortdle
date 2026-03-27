@@ -4,16 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"sortdle-server/utils"
 	"time"
 )
 
-type DailyPuzzle struct {
-	Date      string `json:"date"`
-	Algorithm string `json:"algorithm"`
-	Numbers   []int  `json:"numbers"`
-}
-
-func GetDailyPuzzleRow(db *sql.DB) DailyPuzzle {
+func GetDailyPuzzleRow(db *sql.DB) utils.DailyPuzzle {
 	var puzzleDate string
 	var algorithm string
 	var rawNumbers []byte
@@ -23,7 +18,7 @@ func GetDailyPuzzleRow(db *sql.DB) DailyPuzzle {
 	err := db.QueryRow(query, todayDate).Scan(&puzzleDate, &algorithm, &rawNumbers)
 
 	if err == sql.ErrNoRows {
-		return DailyPuzzle{}
+		return utils.DailyPuzzle{}
 	}
 
 	if err != nil {
@@ -36,9 +31,21 @@ func GetDailyPuzzleRow(db *sql.DB) DailyPuzzle {
 		log.Fatal(err)
 	}
 
-	return DailyPuzzle{
+	return utils.DailyPuzzle{
 		Date:      puzzleDate,
 		Algorithm: algorithm,
 		Numbers:   numbers,
+	}
+}
+
+func SetDailyPuzzle(data *utils.DailyPuzzle, db *sql.DB) {
+	query := "INSERT INTO daily_puzzle(puzzle_date, algorithm, numbers) VALUES (?,?,?);"
+	date := data.Date
+	algorithm := data.Algorithm
+	numbers := data.Numbers
+
+	res, err := db.Exec(query, date, algorithm, numbers)
+	if err != nil {
+		log.Fatal(err, res)
 	}
 }
