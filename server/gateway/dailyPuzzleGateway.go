@@ -42,9 +42,12 @@ func SetDailyPuzzle(data *utils.DailyPuzzle, db *sql.DB) {
 	query := "INSERT INTO daily_puzzle(puzzle_date, algorithm, numbers) VALUES (?,?,?);"
 	date := data.Date
 	algorithm := data.Algorithm
-	numbers := data.Numbers
+	serializedNums, err := json.Marshal(data.Numbers)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	res, err := db.Exec(query, date, algorithm, numbers)
+	res, err := db.Exec(query, date, algorithm, serializedNums)
 	if err != nil {
 		log.Fatal(err, res)
 	}
