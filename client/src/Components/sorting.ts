@@ -1,37 +1,39 @@
 import { type SortInstruction } from "../utils/types";
 
-export function getSortInstructions(sortType: string, numbers: number[]): SortInstruction[] {
+export function getSortInstructions(sortType: string, numbers: number[], signal: AbortSignal): SortInstruction[] {
     switch (sortType) {
         case "bubble":
-            return bubbleSort(numbers);
+            return bubbleSort(numbers, signal);
         case "selection":
-            return selectionSort(numbers);
+            return selectionSort(numbers, signal);
         case "insertion":
-            return insertionSort(numbers);
+            return insertionSort(numbers, signal);
         case "merge":
-            return mergeSort(numbers);
+            return mergeSort(numbers, signal);
         case "quick":
-            return quickSort(numbers);
+            return quickSort(numbers, signal);
         case "heap":
-            return heapSort(numbers);
+            return heapSort(numbers, signal);
         case "counting":
-            return countingSort(numbers);
+            return countingSort(numbers, signal);
         case "radix":
-            return radixSort(numbers);
+            return radixSort(numbers, signal);
         case "bucket":
-            return bucketSort(numbers);
+            return bucketSort(numbers, signal);
         default:
             throw new Error('invalid sort type')
     }
 }
 
-export function bubbleSort(numbers: number[]): SortInstruction[] {
+function bubbleSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     let swapped = false;
     let sortInstructions = [];
     let numbersCopy = [...numbers];
     for (let i = 0; i < numbers.length - 1; i++) {
         swapped = false;
         for (let j = 0; j < numbers.length - i - 1; j++) {
+            if (signal.aborted) return sortInstructions;
+
             if (numbersCopy[j] > numbersCopy[j+1]) {
                 let sortInstruction: SortInstruction = {action:'SWAP', indexFrom:j, indexTo:j+1};
                 sortInstructions.push(sortInstruction);
@@ -49,13 +51,15 @@ export function bubbleSort(numbers: number[]): SortInstruction[] {
 // All functions below this point were vibe coded - I have no shame >:)
 
 // Finds the minimum element in the unsorted portion and swaps it into place.
-export function selectionSort(numbers: number[]): SortInstruction[] {
+function selectionSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
     for (let i = 0; i < numbersCopy.length - 1; i++) {
         let minIndex = i;
         for (let j = i + 1; j < numbersCopy.length; j++) {
+            if (signal.aborted) return sortInstructions;
+
             if (numbersCopy[j] < numbersCopy[minIndex]) {
                 minIndex = j;
             }
@@ -71,13 +75,15 @@ export function selectionSort(numbers: number[]): SortInstruction[] {
 }
  
 // Builds a sorted portion by shifting each new element leftward into its correct position.
-export function insertionSort(numbers: number[]): SortInstruction[] {
+function insertionSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
     for (let i = 1; i < numbersCopy.length; i++) {
         let j = i;
         while (j > 0 && numbersCopy[j - 1] > numbersCopy[j]) {
+            if (signal.aborted) return sortInstructions;
+
             sortInstructions.push({ action: 'SWAP', indexFrom: j - 1, indexTo: j });
             const temp = numbersCopy[j];
             numbersCopy[j] = numbersCopy[j - 1];
@@ -90,7 +96,7 @@ export function insertionSort(numbers: number[]): SortInstruction[] {
  
 // Recursively divides the array in half and merges the halves back in sorted order.
 // Merging is expressed as a sequence of SWAPs that move elements into their correct positions.
-export function mergeSort(numbers: number[]): SortInstruction[] {
+function mergeSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
@@ -100,6 +106,7 @@ export function mergeSort(numbers: number[]): SortInstruction[] {
         let i = 0, j = 0, k = left;
  
         while (i < leftArr.length && j < rightArr.length) {
+            checkAbort(signal);
             if (leftArr[i] <= rightArr[j]) {
                 if (arr[k] !== leftArr[i]) {
                     const swapTarget = arr.indexOf(leftArr[i], k);
@@ -130,23 +137,24 @@ export function mergeSort(numbers: number[]): SortInstruction[] {
         mergeSortHelper(arr, mid + 1, right);
         merge(arr, left, mid, right);
     }
- 
+
     mergeSortHelper(numbersCopy, 0, numbersCopy.length - 1);
     return sortInstructions;
 }
  
 // Partitions the array around a pivot, then recursively sorts each partition.
-export function quickSort(numbers: number[]): SortInstruction[] {
+function quickSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
-    function partition(arr: number[], low: number, high: number): number {
+    function partition(arr: number[], low: number, high: number, signal: AbortSignal): number {
         const pivot = arr[high];
         let i = low - 1;
         for (let j = low; j < high; j++) {
             if (arr[j] <= pivot) {
                 i++;
                 if (i !== j) {
+                    checkAbort(signal);
                     sortInstructions.push({ action: 'SWAP', indexFrom: i, indexTo: j });
                     const temp = arr[i];
                     arr[i] = arr[j];
@@ -163,41 +171,42 @@ export function quickSort(numbers: number[]): SortInstruction[] {
         return i + 1;
     }
  
-    function quickSortHelper(arr: number[], low: number, high: number) {
+    function quickSortHelper(arr: number[], low: number, high: number, signal: AbortSignal) {
         if (low >= high) return;
-        const pivotIndex = partition(arr, low, high);
-        quickSortHelper(arr, low, pivotIndex - 1);
-        quickSortHelper(arr, pivotIndex + 1, high);
+        const pivotIndex = partition(arr, low, high, signal);
+        quickSortHelper(arr, low, pivotIndex - 1, signal);
+        quickSortHelper(arr, pivotIndex + 1, high, signal);
     }
  
-    quickSortHelper(numbersCopy, 0, numbersCopy.length - 1);
+    quickSortHelper(numbersCopy, 0, numbersCopy.length - 1, signal);
     return sortInstructions;
 }
  
 // Builds a max-heap, then repeatedly extracts the maximum to produce a sorted array.
-export function heapSort(numbers: number[]): SortInstruction[] {
+function heapSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
     const n = numbersCopy.length;
  
-    function heapify(arr: number[], size: number, root: number) {
+    function heapify(arr: number[], size: number, root: number, signal: AbortSignal) {
         let largest = root;
         const left = 2 * root + 1;
         const right = 2 * root + 2;
         if (left < size && arr[left] > arr[largest]) largest = left;
         if (right < size && arr[right] > arr[largest]) largest = right;
         if (largest !== root) {
+            checkAbort(signal);
             sortInstructions.push({ action: 'SWAP', indexFrom: root, indexTo: largest });
             const temp = arr[root];
             arr[root] = arr[largest];
             arr[largest] = temp;
-            heapify(arr, size, largest);
+            heapify(arr, size, largest, signal);
         }
     }
  
     // Build max-heap
     for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-        heapify(numbersCopy, n, i);
+        heapify(numbersCopy, n, i, signal);
     }
  
     // Extract elements from heap one by one
@@ -206,14 +215,14 @@ export function heapSort(numbers: number[]): SortInstruction[] {
         const temp = numbersCopy[0];
         numbersCopy[0] = numbersCopy[i];
         numbersCopy[i] = temp;
-        heapify(numbersCopy, i, 0);
+        heapify(numbersCopy, i, 0, signal);
     }
  
     return sortInstructions;
 }
  
 // Counts occurrences of each value, then reconstructs the array in sorted order via SWAPs.
-export function countingSort(numbers: number[]): SortInstruction[] {
+function countingSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
@@ -235,6 +244,8 @@ export function countingSort(numbers: number[]): SortInstruction[] {
     // Replay as SWAPs on numbersCopy to match the sorted order
     for (let i = 0; i < numbersCopy.length; i++) {
         if (numbersCopy[i] !== sorted[i]) {
+            if (signal.aborted) return sortInstructions;
+
             const swapTarget = numbersCopy.indexOf(sorted[i], i);
             sortInstructions.push({ action: 'SWAP', indexFrom: i, indexTo: swapTarget });
             const temp = numbersCopy[swapTarget];
@@ -247,7 +258,7 @@ export function countingSort(numbers: number[]): SortInstruction[] {
 }
  
 // Sorts by processing one digit at a time from least significant to most significant.
-export function radixSort(numbers: number[]): SortInstruction[] {
+function radixSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
  
@@ -267,6 +278,8 @@ export function radixSort(numbers: number[]): SortInstruction[] {
         // Replay as SWAPs
         for (let i = 0; i < numbersCopy.length; i++) {
             if (numbersCopy[i] !== sorted[i]) {
+                if (signal.aborted) return sortInstructions;
+
                 const swapTarget = numbersCopy.indexOf(sorted[i], i);
                 sortInstructions.push({ action: 'SWAP', indexFrom: i, indexTo: swapTarget });
                 const temp = numbersCopy[swapTarget];
@@ -280,7 +293,7 @@ export function radixSort(numbers: number[]): SortInstruction[] {
 }
  
 // Distributes elements into buckets by value range, sorts each bucket, then concatenates.
-export function bucketSort(numbers: number[]): SortInstruction[] {
+function bucketSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
     const n = numbersCopy.length;
@@ -301,6 +314,8 @@ export function bucketSort(numbers: number[]): SortInstruction[] {
     // Replay as SWAPs
     for (let i = 0; i < numbersCopy.length; i++) {
         if (numbersCopy[i] !== sorted[i]) {
+            if (signal.aborted) return sortInstructions;
+            
             const swapTarget = numbersCopy.indexOf(sorted[i], i);
             sortInstructions.push({ action: 'SWAP', indexFrom: i, indexTo: swapTarget });
             const temp = numbersCopy[swapTarget];
@@ -310,4 +325,8 @@ export function bucketSort(numbers: number[]): SortInstruction[] {
     }
  
     return sortInstructions;
+}
+
+function checkAbort(signal: AbortSignal) {
+  if (signal.aborted) throw new DOMException('Sort aborted', 'AbortError');
 }

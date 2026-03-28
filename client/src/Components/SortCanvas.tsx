@@ -1,5 +1,5 @@
 import './stylesheets/sortcanvas.css'
-import { useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
+import { useEffect, useImperativeHandle, forwardRef, useRef, type RefObject } from 'react';
 import { CanvasRenderer } from './CanvasRenderer';
 import type { SortCanvasProps } from '../utils/types';
 
@@ -8,8 +8,11 @@ const SortCanvas = forwardRef((props: SortCanvasProps, ref) => {
     const rendererRef = useRef<CanvasRenderer | null>(null);
 
     useImperativeHandle(ref, () => ({
-        runSort(sortType: string) {
-            rendererRef.current?.dispatchSort(sortType, props.numbers, props.percentUncovered);
+        runSort(sortType: string, abortRef: RefObject<AbortController>) {
+            abortRef.current?.abort();
+            abortRef.current = new AbortController()
+
+            rendererRef.current?.dispatchSort(sortType, props.numbers, props.percentUncovered, abortRef.current.signal);
         },
     }));
 

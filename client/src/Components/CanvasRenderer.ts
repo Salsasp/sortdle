@@ -56,13 +56,18 @@ export class CanvasRenderer {
         this.ctx.fillRect(uncoveredWidth, this.canvas.height, this.canvas.width-uncoveredWidth, -this.canvas.height)
     }
 
-    async dispatchSort(sortType: string, numbers: number[], percentUncovered: number) {
+    async dispatchSort(sortType: string, numbers: number[], percentUncovered: number, signal: AbortSignal) {
         const workingNumbers = [...numbers];
-        const instructions = getSortInstructions(sortType, workingNumbers);
-
-        for (const instruction of instructions) {
-            this.executeInstruction(instruction, workingNumbers, percentUncovered);
-            await sleep(25);
+        try {
+            const instructions = getSortInstructions(sortType, workingNumbers, signal);
+            for (const instruction of instructions) {
+                if (signal.aborted) return;
+                this.executeInstruction(instruction, workingNumbers, percentUncovered);
+                await sleep(25);
+            }
+        } catch (e: any) {
+            if (e.name === 'AbortError') return; // Specifically catch early exits from recursive sorts
+            throw e;
         }
     }
 

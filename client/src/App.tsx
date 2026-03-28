@@ -20,6 +20,8 @@ function App() {
   const [percentUncovered, setPercentUncovered] = useState(Math.min((100 / 5) * (6-guessesRemaining), 100)); // This too
 
   const userFailed = !guessSuccess && guessesRemaining === 0;
+
+  const abortRef = useRef<AbortController | null>(null);
  
   useEffect(() => {
     async function fetchNumbers() {
@@ -40,6 +42,9 @@ function App() {
   }, []);
  
   const handleGuessSubmission = () => {
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     if (selectedAlgorithm === dailyAlgorithm && !userFailed) {
       setGuessSuccess(true);
       setPercentUncovered(100);
@@ -78,7 +83,7 @@ function App() {
           value={selectedAlgorithm}
           onChange={setSelectedAlgorithm}
         />
-        <button className="btn btn-sort" onClick={() => canvasRef.current.runSort(dailyAlgorithm)}>
+        <button className="btn btn-sort" onClick={() => canvasRef.current.runSort(dailyAlgorithm, abortRef)}>
           Sort!
         </button>
         <button className="btn btn-guess" onClick={handleGuessSubmission}>
