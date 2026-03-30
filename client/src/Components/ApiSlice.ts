@@ -10,3 +10,9 @@ export async function getDailyPuzzleData() {
     const data = await response.json();
     return data;
 }
+
+export async function getAllPuzzlesData() {
+    const response = await fetch("/api/getAllPuzzles");
+    const data = await response.json();
+    return data;
+}

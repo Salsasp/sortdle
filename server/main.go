@@ -40,6 +40,11 @@ func main() {
 	http.HandleFunc("/api/getDailyPuzzle", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetDailyPuzzle(w, r, db)
 	})
+
+	http.HandleFunc("/api/getAllPuzzles", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetAllPuzzles(w, r, db)
+	})
+
 	http.HandleFunc("/api/numbers", handlers.GetNumbers)
 
 	fmt.Println("Server running on :8080")

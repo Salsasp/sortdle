@@ -4,7 +4,7 @@ import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
 import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
 import type { AlgorithmSelectorOption } from './utils/types'
-import { getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
+import { getAllPuzzlesData, getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
 import GuessVisualizer from './Components/GuessVisualizer'
  
 function App() {
@@ -40,6 +40,14 @@ function App() {
     }
     fetchDailyPuzzleData();
   }, []);
+
+  useEffect(() => {
+    async function fetchAllPuzzleData() {
+      const puzzleData = await getAllPuzzlesData();
+      // add setters here when implemented
+    }
+    fetchAllPuzzleData();
+  })
  
   const handleGuessSubmission = () => {
     abortRef.current?.abort();

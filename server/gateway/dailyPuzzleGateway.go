@@ -38,6 +38,45 @@ func GetDailyPuzzleRow(db *sql.DB) utils.DailyPuzzle {
 	}
 }
 
+func GetAllPuzzleRows(db *sql.DB) []utils.DailyPuzzle {
+	query := "SELECT puzzle_date, algorithm, numbers FROM daily_puzzle;"
+	rows, err := db.Query(query)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	var dailyPuzzles []utils.DailyPuzzle
+
+	for rows.Next() {
+		var (
+			date       string
+			algorithm  string
+			rawNumbers []byte
+		)
+		if err := rows.Scan(&date, &algorithm, &rawNumbers); err != nil {
+			log.Fatal(err)
+		}
+
+		var numbers []int
+		err = json.Unmarshal(rawNumbers, &numbers)
+		if err != nil {
+			log.Fatal(err)
+		}
+		dailyPuzzle := utils.DailyPuzzle{
+			Date:      date,
+			Algorithm: algorithm,
+			Numbers:   numbers,
+		}
+
+		dailyPuzzles = append(dailyPuzzles, dailyPuzzle)
+	}
+
+	return dailyPuzzles
+}
+
 func SetDailyPuzzle(data *utils.DailyPuzzle, db *sql.DB) {
 	query := "INSERT INTO daily_puzzle(puzzle_date, algorithm, numbers) VALUES (?,?,?);"
 	date := data.Date
