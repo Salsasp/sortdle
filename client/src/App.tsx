@@ -3,9 +3,10 @@ import './App.css'
 import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
 import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
-import type { AlgorithmSelectorOption } from './utils/types'
+import { type PuzzleData, type AlgorithmSelectorOption } from './utils/types'
 import { getAllPuzzlesData, getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
 import GuessVisualizer from './Components/GuessVisualizer'
+import PuzzleSideDrawer from './Components/PuzzleSideDrawer'
  
 function App() {
   const DEFAULT_SELECTOR_ALGORITHM = 'bubble';
@@ -14,10 +15,12 @@ function App() {
   const [arr, setArr] = useState<number[]>([]);
   const [dailyAlgorithm, setDailyAlgorithm] = useState<string>(DEFAULT_SELECTOR_ALGORITHM);
   const [puzzleDate, setPuzzleDate] = useState<string>();
+  const [puzzleData, setPuzzleData] = useState<PuzzleData[]>([]);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(DEFAULT_SELECTOR_ALGORITHM);
   const [guessesRemaining, setGuessesRemaining] = useState(5); // TODO: This should probably use constants instead of magic numbers
   const [guessSuccess, setGuessSuccess] = useState(false);
   const [percentUncovered, setPercentUncovered] = useState(Math.min((100 / 5) * (6-guessesRemaining), 100)); // This too
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
 
   const userFailed = !guessSuccess && guessesRemaining === 0;
 
@@ -44,7 +47,7 @@ function App() {
   useEffect(() => {
     async function fetchAllPuzzleData() {
       const puzzleData = await getAllPuzzlesData();
-      // add setters here when implemented
+      updatePuzzleData(puzzleData);
     }
     fetchAllPuzzleData();
   })
@@ -64,6 +67,18 @@ function App() {
       setPercentUncovered(Math.min((100 / 5) * (6 - newGuessesRemaining), 100));
     }
   };
+
+  const handleSideDrawerSelect = () => {
+    //TODO
+  }
+
+  const updatePuzzleData = (puzzleData: any[]) => {
+    setPuzzleData(puzzleData.map(element => ({
+      date: element['date'],
+      algorithm: element['algorithm'],
+      numbers: element['numbers']
+    })));
+}
  
   const options: AlgorithmSelectorOption[] = ALGO_SELECTOR_VALUES.map((value, index) => ({
     value: value,
@@ -79,6 +94,8 @@ function App() {
  
       {guessSuccess && <p className="status-message status-success">✓ Correct! Well played.</p>}
       {userFailed && <p className="status-message status-fail">✗ Better luck next time!</p>}
+
+      {sideDrawerOpen && <PuzzleSideDrawer data={puzzleData} isOpen={sideDrawerOpen} onClick={handleSideDrawerSelect}></PuzzleSideDrawer>}
  
       <SortCanvas ref={canvasRef} numbers={arr} percentUncovered={percentUncovered} />
  

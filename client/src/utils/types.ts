@@ -1,13 +1,19 @@
 export type SelectorProps = {
-    id: string;
-    options: AlgorithmSelectorOption[];
-    value: string;
-    onChange: (val: string) => void;
+    id: string,
+    options: AlgorithmSelectorOption[],
+    value: string,
+    onChange: (val: string) => void
 }
 
 export type SortCanvasProps = {
     numbers: number[],
     percentUncovered: number
+}
+
+export type PuzzleSideDrawerProps = {
+    data: PuzzleData[],
+    isOpen: boolean,
+    onClick: () => void
 }
 
 export type SortInstruction = {
@@ -19,6 +25,12 @@ export type SortInstruction = {
 export type StringMap = Record<string, string>;
 
 export type AlgorithmSelectorOption = {
-    value: string
+    value: string,
     label: string
 };
+
+export type PuzzleData = {
+    date: string,
+    algorithm: string,
+    numbers: number[]
+}
