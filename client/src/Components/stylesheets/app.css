@@ -306,3 +306,29 @@ body::before {
   box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
   transform: translateY(-1px);
 }
+
+.side-drawer-button-container {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.drawer-button {
+  background: #363636;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drawer-button:hover {
+    opacity: 1;
+}
+
+.drawer-button img {
+    width: 50px;
+    height: 50px;
+}

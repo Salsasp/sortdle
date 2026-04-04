@@ -91,11 +91,25 @@ function App() {
         <h1 className='main-title-text'>Sortdle</h1>
         <h1 className='main-title-text'>{puzzleDate}</h1>
       </div>
+
+      <div className='side-drawer-button-container'>
+        <h3>Previous Puzzles</h3>
+        <button className='drawer-button' onClick={()=>{setSideDrawerOpen(true)}}>
+          <img src='./images/hamburger.png'></img>
+        </button>
+      </div>
  
       {guessSuccess && <p className="status-message status-success">✓ Correct! Well played.</p>}
       {userFailed && <p className="status-message status-fail">✗ Better luck next time!</p>}
 
-      {sideDrawerOpen && <PuzzleSideDrawer data={puzzleData} isOpen={sideDrawerOpen} onClick={handleSideDrawerSelect}></PuzzleSideDrawer>}
+      {sideDrawerOpen && 
+      <PuzzleSideDrawer
+        data={puzzleData}
+        isOpen={sideDrawerOpen}
+        onDateClick={handleSideDrawerSelect}
+        setSideDrawerOpen={setSideDrawerOpen}>
+      </PuzzleSideDrawer>
+      }
  
       <SortCanvas ref={canvasRef} numbers={arr} percentUncovered={percentUncovered} />
  
