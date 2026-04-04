@@ -45,3 +45,4 @@ vendor/
 
 # Environment files
 .env
+.env.production
