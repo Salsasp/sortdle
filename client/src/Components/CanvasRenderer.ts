@@ -63,7 +63,7 @@ export class CanvasRenderer {
             for (const instruction of instructions) {
                 if (signal.aborted) return;
                 this.executeInstruction(instruction, workingNumbers, percentUncovered);
-                await sleep(25);
+                await sleep(25, signal);
             }
         } catch (e: any) {
             if (e.name === 'AbortError') return; // Specifically catch early exits from recursive sorts

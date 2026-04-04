@@ -13,7 +13,6 @@ export type SortCanvasProps = {
 export type PuzzleSideDrawerProps = {
     data: PuzzleData[],
     isOpen: boolean,
-    onDateClick: () => void,
     setSideDrawerOpen: (value: boolean) => void
 }
 
@@ -34,4 +33,8 @@ export type PuzzleData = {
     date: string,
     algorithm: string,
     numbers: number[]
+}
+
+export type AppProps = {
+    puzzleDateArg?: string;
 }

@@ -1,12 +1,14 @@
 import type { PuzzleSideDrawerProps } from "../utils/types";
 import '../Components/stylesheets/sidedrawer.css'
+import { useNavigate } from "react-router-dom";
 
 function PuzzleSideDrawer (props: PuzzleSideDrawerProps) {
     const handleCloseClick = () => {
         props.setSideDrawerOpen(false)
     }
+    const navigate =  useNavigate();
 
-    return ( // TODO: replace "Close Me" with 3 line stack icon
+    return (
         <>
             {props.isOpen && <div className="drawer-backdrop" onClick={handleCloseClick} />}
             <div className={`drawer ${props.isOpen ? 'drawer--open' : ''}`}>
@@ -19,7 +21,7 @@ function PuzzleSideDrawer (props: PuzzleSideDrawerProps) {
                 <div className="elements-container">
                     {props.data.map((puzzle) => (
                         <div className="puzzle-side-drawer-element">
-                            <button className="drawer-item-clickable" onClick={props.onDateClick}>
+                            <button className="drawer-item-clickable" onClick={() => navigate(`/${puzzle.date}`)}>
                                 {puzzle.date}
                             </button>
                         </div>

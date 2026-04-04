@@ -3,12 +3,12 @@ import './App.css'
 import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
 import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
-import { type PuzzleData, type AlgorithmSelectorOption } from './utils/types'
-import { getAllPuzzlesData, getDailyPuzzleData, getDailyRandomNumbers } from './Components/ApiSlice'
+import { type PuzzleData, type AlgorithmSelectorOption, type AppProps } from './utils/types'
+import { getAllPuzzlesData, getPuzzleDataByDate } from './Components/ApiSlice'
 import GuessVisualizer from './Components/GuessVisualizer'
 import PuzzleSideDrawer from './Components/PuzzleSideDrawer'
  
-function App() {
+function App({ puzzleDateArg = 'today' }: AppProps) {
   const DEFAULT_SELECTOR_ALGORITHM = 'bubble';
   const canvasRef = useRef<any>(null);
  
@@ -23,38 +23,36 @@ function App() {
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
 
   const userFailed = !guessSuccess && guessesRemaining === 0;
-
+ 
   const abortRef = useRef<AbortController | null>(null);
  
-  useEffect(() => {
-    async function fetchNumbers() {
-      const numbers = await getDailyRandomNumbers();
-      setArr(numbers);
-    }
-    fetchNumbers();
-  }, []);
- 
-  useEffect(() => {
-    async function fetchDailyPuzzleData() {
-      const puzzleData = await getDailyPuzzleData();
-      setPuzzleDate(puzzleData['date'])
-      setDailyAlgorithm(puzzleData['algorithm'])
-      setArr(puzzleData['numbers'])
-    }
-    fetchDailyPuzzleData();
-  }, []);
-
   useEffect(() => {
     async function fetchAllPuzzleData() {
       const puzzleData = await getAllPuzzlesData();
       updatePuzzleData(puzzleData);
     }
     fetchAllPuzzleData();
-  })
+  }, []);
+ 
+  useEffect(() => {
+    abortRef.current?.abort();  // abort animation on every date change
+    abortRef.current = new AbortController();
+
+    resetGame();
+    setSideDrawerOpen(false);
+
+    async function fetchDailyPuzzleData() {
+      if (!puzzleDateArg) return;
+      const puzzleData = await getPuzzleDataByDate(puzzleDateArg);
+      setPuzzleDate(puzzleData['date'])
+      setDailyAlgorithm(puzzleData['algorithm'])
+      setArr(puzzleData['numbers'])
+    }
+    fetchDailyPuzzleData();
+  }, [puzzleDateArg]);
  
   const handleGuessSubmission = () => {
     abortRef.current?.abort();
-    abortRef.current = new AbortController();
 
     if (selectedAlgorithm === dailyAlgorithm && !userFailed) {
       setGuessSuccess(true);
@@ -68,9 +66,11 @@ function App() {
     }
   };
 
-  const handleSideDrawerSelect = () => {
-    //TODO
-  }
+  const handleSort = () => {
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+    canvasRef.current.runSort(dailyAlgorithm, abortRef.current.signal);
+}
 
   const updatePuzzleData = (puzzleData: any[]) => {
     setPuzzleData(puzzleData.map(element => ({
@@ -78,6 +78,13 @@ function App() {
       algorithm: element['algorithm'],
       numbers: element['numbers']
     })));
+}
+
+const resetGame = () => {
+  setSelectedAlgorithm(DEFAULT_SELECTOR_ALGORITHM)
+  setGuessesRemaining(5);
+  setPercentUncovered(Math.min((100 / 5) * (6 - 5), 100));
+  setGuessSuccess(false);
 }
  
   const options: AlgorithmSelectorOption[] = ALGO_SELECTOR_VALUES.map((value, index) => ({
@@ -106,7 +113,6 @@ function App() {
       <PuzzleSideDrawer
         data={puzzleData}
         isOpen={sideDrawerOpen}
-        onDateClick={handleSideDrawerSelect}
         setSideDrawerOpen={setSideDrawerOpen}>
       </PuzzleSideDrawer>
       }
@@ -122,7 +128,7 @@ function App() {
           value={selectedAlgorithm}
           onChange={setSelectedAlgorithm}
         />
-        <button className="btn btn-sort" onClick={() => canvasRef.current.runSort(dailyAlgorithm, abortRef)}>
+        <button className="btn btn-sort" onClick={handleSort}>
           Sort!
         </button>
         <button className="btn btn-guess" onClick={handleGuessSubmission}>
