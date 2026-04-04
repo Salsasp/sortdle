@@ -41,6 +41,10 @@ func main() {
 		handlers.GetDailyPuzzle(w, r, db)
 	})
 
+	http.HandleFunc("/api/getPuzzleByDate", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetPuzzleRowByDate(w, r, db)
+	})
+
 	http.HandleFunc("/api/getAllPuzzles", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllPuzzles(w, r, db)
 	})

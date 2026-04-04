@@ -35,6 +35,21 @@ func GetAllPuzzles(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	json.NewEncoder(w).Encode(rows)
 }
 
+func GetPuzzleRowByDate(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	dateParam := r.URL.Query().Get("date")
+
+	var rowData utils.DailyPuzzle
+	if dateParam == "" || dateParam == "today" {
+		rowData = gateway.GetDailyPuzzleRow(db)
+	} else {
+		rowData = gateway.GetPuzzleRowByDate(db, dateParam)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*") //TODO: lock this down in prod
+	json.NewEncoder(w).Encode(rowData)
+}
+
 func SetDailyPuzzle(db *sql.DB) {
 	nums := utils.GetRandomNumbers(100, 500)
 	date := time.Now().Format("2006-01-02")

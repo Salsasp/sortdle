@@ -77,6 +77,34 @@ func GetAllPuzzleRows(db *sql.DB) []utils.DailyPuzzle {
 	return dailyPuzzles
 }
 
+func GetPuzzleRowByDate(db *sql.DB, date string) utils.DailyPuzzle {
+	var puzzleDate string
+	var algorithm string
+	var rawNumbers []byte
+	query := "SELECT puzzle_date, algorithm, numbers FROM daily_puzzle WHERE puzzle_date = ?"
+	err := db.QueryRow(query, date).Scan(&puzzleDate, &algorithm, &rawNumbers)
+
+	if err == sql.ErrNoRows {
+		return utils.DailyPuzzle{}
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var numbers []int
+	err = json.Unmarshal(rawNumbers, &numbers)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return utils.DailyPuzzle{
+		Date:      puzzleDate,
+		Algorithm: algorithm,
+		Numbers:   numbers,
+	}
+}
+
 func SetDailyPuzzle(data *utils.DailyPuzzle, db *sql.DB) {
 	query := "INSERT INTO daily_puzzle(puzzle_date, algorithm, numbers) VALUES (?,?,?);"
 	date := data.Date
