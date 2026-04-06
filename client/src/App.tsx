@@ -26,7 +26,7 @@ function App({ puzzleDateArg = 'today' }: AppProps) {
  
   const abortRef = useRef<AbortController | null>(null);
  
-  useEffect(() => {
+  useEffect(() => { // fetch all puzzle data on page load
     async function fetchAllPuzzleData() {
       const puzzleData = await getAllPuzzlesData();
       updatePuzzleData(puzzleData);
@@ -34,8 +34,8 @@ function App({ puzzleDateArg = 'today' }: AppProps) {
     fetchAllPuzzleData();
   }, []);
  
-  useEffect(() => {
-    abortRef.current?.abort();  // abort animation on every date change
+  useEffect(() => { // handle route change; reset variables and new puzzle data
+    abortRef.current?.abort(); // abort any in progress animations on route change
     abortRef.current = new AbortController();
 
     resetGame();
