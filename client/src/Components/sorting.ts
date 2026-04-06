@@ -94,17 +94,15 @@ function insertionSort(numbers: number[], signal: AbortSignal): SortInstruction[
     return sortInstructions;
 }
  
-// Recursively divides the array in half and merges the halves back in sorted order.
-// Merging is expressed as a sequence of SWAPs that move elements into their correct positions.
 function mergeSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
     const sortInstructions: SortInstruction[] = [];
     const numbersCopy = [...numbers];
- 
+
     function merge(arr: number[], left: number, mid: number, right: number) {
         const leftArr = arr.slice(left, mid + 1);
         const rightArr = arr.slice(mid + 1, right + 1);
         let i = 0, j = 0, k = left;
- 
+
         while (i < leftArr.length && j < rightArr.length) {
             checkAbort(signal);
             if (leftArr[i] <= rightArr[j]) {
@@ -128,8 +126,34 @@ function mergeSort(numbers: number[], signal: AbortSignal): SortInstruction[] {
             }
             k++;
         }
+
+        while (i < leftArr.length) {
+            checkAbort(signal);
+            if (arr[k] !== leftArr[i]) {
+                const swapTarget = arr.indexOf(leftArr[i], k);
+                sortInstructions.push({ action: 'SWAP', indexFrom: k, indexTo: swapTarget });
+                const temp = arr[swapTarget];
+                arr[swapTarget] = arr[k];
+                arr[k] = temp;
+            }
+            i++;
+            k++;
+        }
+
+        while (j < rightArr.length) {
+            checkAbort(signal);
+            if (arr[k] !== rightArr[j]) {
+                const swapTarget = arr.indexOf(rightArr[j], k);
+                sortInstructions.push({ action: 'SWAP', indexFrom: k, indexTo: swapTarget });
+                const temp = arr[swapTarget];
+                arr[swapTarget] = arr[k];
+                arr[k] = temp;
+            }
+            j++;
+            k++;
+        }
     }
- 
+
     function mergeSortHelper(arr: number[], left: number, right: number) {
         if (left >= right) return;
         const mid = Math.floor((left + right) / 2);
