@@ -46,3 +46,6 @@ vendor/
 # Environment files
 .env
 .env.production
+
+# DB
+schema.sql
