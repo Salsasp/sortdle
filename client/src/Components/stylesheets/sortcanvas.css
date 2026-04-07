@@ -1,10 +1,22 @@
 #sort-canvas {
-    border: 1px solid rgba(0, 245, 255, 0.25);
-    border-radius: 4px;
-    display: block;
+  border: 1px solid rgba(0, 245, 255, 0.25);
+  border-radius: 4px;
+  display: block;
+  box-shadow:
+    0 0 0 1px rgba(0, 245, 255, 0.08),
+    0 0 40px rgba(0, 245, 255, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+  background: #11111a;
+  /* Scale canvas down to fit the screen without cropping */
+  max-width: 100%;
+  height: auto;
+}
+
+/* On mobile, remove heavy glow effects for better performance */
+@media (max-width: 768px) {
+  #sort-canvas {
     box-shadow:
-        0 0 0 1px rgba(0, 245, 255, 0.08),
-        0 0 40px rgba(0, 245, 255, 0.06),
-        0 8px 32px rgba(0, 0, 0, 0.6);
-    background: #11111a;
+      0 0 0 1px rgba(0, 245, 255, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.5);
+  }
 }
