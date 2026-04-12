@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import Dropdown from './Components/Dropdown'
 import SortCanvas from './Components/SortCanvas'
-import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES } from './constants/algorithms'
+import { ALGO_SELECTOR_LABELS, ALGO_SELECTOR_VALUES, type AlgorithmSelectorValue } from './constants/algorithms'
 import { type PuzzleData, type AlgorithmSelectorOption, type AppProps } from './utils/types'
 import { getAllPuzzlesData, getPuzzleDataByDate } from './Components/ApiSlice'
 import GuessVisualizer from './Components/GuessVisualizer'
@@ -91,6 +91,9 @@ const resetGame = () => {
     value: value,
     label: ALGO_SELECTOR_LABELS[index]
   }));
+
+  //TODO: fix this horrifically janky mess
+  const dailyAlgorithmLabel = ALGO_SELECTOR_LABELS[ALGO_SELECTOR_VALUES.indexOf(dailyAlgorithm as unknown as AlgorithmSelectorValue)];
  
   return (
     <>
@@ -108,6 +111,7 @@ const resetGame = () => {
  
       {guessSuccess && <p className="status-message status-success">✓ Correct! Well played.</p>}
       {userFailed && <p className="status-message status-fail">✗ Better luck next time!</p>}
+      {(guessSuccess || userFailed) && <p className="status-message correct-algorithm">Today's algorithm was {dailyAlgorithmLabel}</p>}
 
       {sideDrawerOpen && 
       <PuzzleSideDrawer

@@ -10,7 +10,7 @@ export const ALGO_SELECTOR_LABELS = [
     "Bucket Sort",
  ] as const;
 
-export type AlgorithmSelectorLabel = keyof typeof ALGO_SELECTOR_LABELS;
+export type AlgorithmSelectorLabel = typeof ALGO_SELECTOR_LABELS[number];
 
 export const ALGO_SELECTOR_VALUES = [
     "bubble",
@@ -24,4 +24,4 @@ export const ALGO_SELECTOR_VALUES = [
     "bucket",
  ] as const;
 
-export type AlgorithmSelectorValue = keyof typeof ALGO_SELECTOR_VALUES;
+export type AlgorithmSelectorValue = typeof ALGO_SELECTOR_VALUES[number];
