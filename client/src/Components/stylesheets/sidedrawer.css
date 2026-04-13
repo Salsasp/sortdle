@@ -3,15 +3,21 @@
   top: 0;
   left: 0;
   height: 100vh;
-  /* Full-width on very small phones, fixed width otherwise */
-  width: min(280px, 85vw);
+  width: min(260px, 85vw);
   transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
-  background: #0a0a0f;
-  /* Allow drawer content to scroll if screen is short */
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0,255,255,0.06), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(140,0,255,0.06), transparent 40%),
+    #0a0e1a;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  box-shadow:
+    3px 0 24px rgba(0,255,255,0.08),
+    inset -1px 0 rgba(0,255,255,0.10);
+  display: flex;
+  flex-direction: column;
 }
 
 .drawer--open {
@@ -21,67 +27,132 @@
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 99;
 }
 
-.header-container {
+/* ── Brand / Logo ── */
+.drawer-brand {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  gap: 0px;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  /* Minimum 44×44 tap target */
-  padding: 0.5rem;
-  min-width: 44px;
-  min-height: 44px;
+.brand-title {
+  font-size: 16px;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+}
+
+.logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
 }
 
-.close-button:hover {
+.logo img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* ── Nav section ── */
+.drawer-nav {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 11px 12px;
+  width: 100%;
+  text-align: left;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-item:hover {
+  background: rgba(0,255,255,0.08);
+  color: var(--accent-cyan);
+}
+
+.nav-item.active {
+  background: rgba(0,255,255,0.1);
+  color: var(--accent-cyan);
+}
+
+.nav-item svg,
+.nav-item img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.nav-item.active svg,
+.nav-item.active img {
   opacity: 1;
 }
 
-.close-button img {
-  width: 18px;
-  height: 18px;
+/* ── Previous Puzzles section ── */
+.header-container {
+  padding: 16px 16px 6px;
+}
+
+.header-container h3 {
+  font-size: 0.7rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
 }
 
 .elements-container {
   display: flex;
   flex-direction: column;
+  padding: 4px 0;
 }
 
 .puzzle-side-drawer-element {
-  border-bottom: 1px solid var(--border-glow);
+  margin: 2px 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  animation: fadeSlide 0.2s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .drawer-item-clickable {
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
   border: none;
-  cursor: pointer;
+  border-radius: 6px;
+  padding: 10px 12px;
   width: 100%;
-  text-align: left;
-  /* Generous padding for easy tapping */
-  padding: 1rem 1.25rem;
-  min-height: 44px;
   color: var(--text-primary);
-  font-family: var(--font-body);
   font-size: 0.9rem;
-  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
 .drawer-item-clickable:hover {
-  background: rgba(0, 245, 255, 0.06);
+  background: rgba(0,255,255,0.06);
   color: var(--accent-cyan);
 }
 
@@ -89,6 +160,6 @@
 @media (max-width: 480px) {
   .drawer-item-clickable {
     font-size: 1rem;
-    padding: 1.1rem 1.25rem;
+    padding: 1rem 1.25rem;
   }
 }
