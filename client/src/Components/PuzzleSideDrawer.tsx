@@ -13,10 +13,20 @@ function PuzzleSideDrawer (props: PuzzleSideDrawerProps) {
             {props.isOpen && <div className="drawer-backdrop" onClick={handleCloseClick} />}
             <div className={`drawer ${props.isOpen ? 'drawer--open' : ''}`}>
                 <div className="header-container">
+                    <div className="drawer-brand">
+                        <div className="logo">
+                            <img src="sortdle.svg"></img>
+                        </div>
+                        <h2 className="brand-title">SORTDLE</h2>
+                    </div>
+                </div>
+                <div className="drawer-nav">
+                    <button className="nav-item">Today's Puzzle</button>
+                    <button className="nav-item">How to Play</button>
+                    <button className="nav-item">Statistics</button>
+                </div>
+                <div className="header-container">
                     <h3>Previous Puzzles</h3>
-                    <button className="close-button" onClick={handleCloseClick}>
-                        <img src="images/circle_x.png"></img>
-                    </button>
                 </div>
                 <div className="elements-container">
                     {props.data.map((puzzle) => (
