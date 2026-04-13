@@ -68,7 +68,6 @@ function App({ puzzleDateArg = 'today' }: AppProps) {
       </div>
 
       <div className='side-drawer-button-container'>
-        <h3>Previous Puzzles</h3>
         <button className='drawer-button' onClick={()=>{setSideDrawerOpen(true)}}>
           <img src='./images/hamburger.png'></img>
         </button>
