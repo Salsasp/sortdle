@@ -68,9 +68,25 @@ function App({ puzzleDateArg = 'today' }: AppProps) {
       </div>
 
       <div className='side-drawer-button-container'>
-        <h3>Previous Puzzles</h3>
-        <button className='drawer-button' onClick={()=>{setSideDrawerOpen(true)}}>
-          <img src='./images/hamburger.png'></img>
+        <button
+          type="button"
+          className='drawer-button'
+          onClick={() => setSideDrawerOpen(true)}
+          aria-label="Open previous puzzles"
+          aria-expanded={sideDrawerOpen}
+          aria-controls="previous-puzzles-drawer"
+          title="Previous puzzles"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path
+              d="M4 7h16M4 12h16M4 17h10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="drawer-button-label">Archive</span>
         </button>
       </div>
  
@@ -78,13 +94,12 @@ function App({ puzzleDateArg = 'today' }: AppProps) {
       {gameState.userFailed && <p className="status-message status-fail">✗ Better luck next time!</p>}
       {(gameState.guessSuccess || gameState.userFailed) && <p className="status-message correct-algorithm">Today's algorithm was {dailyAlgorithmLabel}</p>}
 
-      {sideDrawerOpen && 
       <PuzzleSideDrawer
         data={gameState.puzzleData}
         isOpen={sideDrawerOpen}
-        setSideDrawerOpen={setSideDrawerOpen}>
-      </PuzzleSideDrawer>
-      }
+        setSideDrawerOpen={setSideDrawerOpen}
+        currentDate={gameState.puzzleDate ?? puzzleDateArg}
+      />
  
       <SortCanvas ref={canvasRef} numbers={gameState.arr} percentUncovered={gameState.percentUncovered} />
  

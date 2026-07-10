@@ -317,27 +317,46 @@ body::before {
   position: absolute;
   top: 1rem;
   left: 1rem;
+  z-index: 10;
 }
  
 .drawer-button {
-  background: #363636;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  height: 44px;
-  width: 44px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.55rem 0.85rem 0.55rem 0.7rem;
+  background: var(--bg-card);
+  color: var(--accent-cyan);
+  border: 1px solid var(--border-glow);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 0 14px rgba(0, 245, 255, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
  
 .drawer-button:hover {
-  opacity: 1;
+  background: rgba(0, 245, 255, 0.08);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 22px rgba(0, 245, 255, 0.22);
+  transform: translateY(-1px);
 }
  
-.drawer-button img {
-  width: 24px;
-  height: 24px;
+.drawer-button:active {
+  transform: scale(0.97);
+}
+ 
+.drawer-button svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(0, 245, 255, 0.35));
+}
+ 
+.drawer-button-label {
+  line-height: 1;
 }
  
 /* ═══════════════════════════════════════
@@ -355,6 +374,14 @@ body::before {
     align-items: center;
     gap: 0.5rem;
     padding: 2.5rem 0 0.75rem; /* extra top space for the drawer button */
+  }
+
+  .drawer-button {
+    padding: 0.55rem 0.7rem;
+  }
+
+  .drawer-button-label {
+    display: none;
   }
  
   .main-title-text {
